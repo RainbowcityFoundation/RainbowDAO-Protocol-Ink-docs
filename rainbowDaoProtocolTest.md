@@ -12,7 +12,7 @@
 
 `rustup default stable`
 
-``rustup update`
+`rustup update`
 
 ##### 4. Add the `nightly` release and the `nightly` WebAssembly (`wasm`) targets by running the following commands: 
 
@@ -32,6 +32,23 @@
  We need to use a Substrate node with the built-in `pallet-contracts` pallet. For this workshop we'll use a pre-configured Substrate node client. 
 
 `cargo install contracts-node --git https://github.com/paritytech/substrate-contracts-node.git --tag v0.3.0 --force --locked`
+
+### 2. ink! CLI
+
+```
+# For Ubuntu or Debian users
+sudo apt install 
+# For MacOS users
+brew install binaryen
+```
+
+#### cargo-contract
+
+`cargo install cargo-contract --vers 0.15.0 --force --locked`
+
+### 3. Running a Substrate Smart Contracts Node
+
+` substrate-contracts-node --dev --tmp `
 
 
 
@@ -53,7 +70,7 @@ git clone git@github.com:RainbowcityFoundation/RainbowDAO-Protocol-Ink-milestone
 
 The RainbowDAO-Protocolprovides script to simplify the contract compilation process while collecting the editing results into a unified directory to facilitate contract deployment and usage. Execute in the project root directory
 
-```
+```bash
 bash ./build.sh
 ```
 
@@ -61,15 +78,13 @@ All contract compilation results are saved in the release directory.
 
 ### Compile  one by one 
 
-##### update version
-
-`cargo install cargo-contract --vers 0.15.0 --force --locked`
-
 ##### compile
+
+` cargo +nightly contract build`
 
 In RainbowDAO-Protocol-Ink-milestone_1 project 
 
-like cd erc20/        cargo +nightly contract build
+like cd erc20/       
 
 erc20 > erc20_factory 
 
@@ -79,35 +94,41 @@ role_manage > route_manage >users_manage > kernel > income_category
 
 ## Deploy
 
-use `https://polkadot.js.org/apps/` upload target/ink .contract file to deploy contract
+The RainbowDao Protocol creates the substrate chain to connect the POLKADOT Ecology, and all contracts are deployed on the RainbowDao Protocol chain. This section explains how to make use of Polkadot JS App to deploy contracts.
 
-or Select the ABI and WASM files that required to deploy contract, click `Upload`, and `Submit and Sign`.
+Use `https://polkadot.js.org/apps/` upload target/ink .contract file to deploy contract.
 
+#### 1.set the node IP and port ( `ws://127.0.0.1:9944` default).
 
+![](./1.png)
+
+#### Upload contracts
+
+Enter `Developer-> Contracts` and click Upload WASM.
+
+![](./2.jpg)
+
+Select the ABI and WASM files that required to deploy contract, click `Upload`, and `Submit and Sign`.
+
+![](./3.jpg)
+
+Wait a moment and the contract code will be uploaded.
+
+### Deploy contracts
+
+After you upload the contracts, you can instantiate the contract on the chain. In substrate, you need to perform the contract’s initialization function, usually new or the default function.
+
+![](./4.jpg)
 
 Select the initialization function call, fill in the initialization parameters, set the main contract administrator, and set the contract initial balance, click `Deploy` before set a proper endornment number, normally 500 is enough. Note that the deployment salt is used.
 
 ## Initialization
 
-### Initialize main contract
+![](./5.jpg)
 
-The main contract manages the DAO templates and DAO instantiations. After the main contract is deployed, you need to initialize the template management function of Main, call the init function and set the code hash of the contract template manager.
+Deploy govnance_dao you should choose a token as covernance token.
 
-
-
-### Add templates for DAO
-
-For now, DAO templates can only be configured in the tool by calling the `addTemplate` function in the main contract, fill in the creator accountid and the code hash for each components in the template.
-
-For example, we create a erc20_factory template with vault erc20 for the template.
-
-After adding the erc20_factory template, you can create the erc20 through the `RainbowDao protocol frond-end`. Jump to the frontend which is served at `http://localhost:8080/`.
-
-
-
-### Creating ERC20
-
-After you create a template, you can create your own DAO from the template that you have set up.
+![](./6.jpg)
 
 # Setup RainbowDao Protocol Front-end
 
@@ -125,11 +146,45 @@ git clone https://github.com/RainbowcityFoundation/RainbowDAO-Protocol-Ink-UI-mi
 
 ### Config front-end
 
-Please find the correct address for `` src/api/connectContract.js ``, and update the correct address in   ``` src/api/connectContract.js ```. And replace `src/api/httpConfig.js connectPath` to your connect path.
+#### 1. Replace contract address
+
+![](./front-1.jpg)
+
+![](./front-3.jpg)
+
+Please find the correct contract address in `src/api/connectContract.js `, and update the correct  contract address in   ``` src/api/connectContract.js ```. 
+
+erc20>erc20
+
+erc20_factory > tokenFactory
+
+govnance_dao>proposal
+
+income_category>incomeManage
+
+kernel>core
+
+uses_manage>userManage
+
+multisig_factory>multisignFactory
+
+
+
+#### 2. Replace Hash 
+
+![](./front-2.jpg)
+
+Please replace hash in `sec/utils/contractHash.json`
+
+#### 3. Replace connect path
+
+And replace `src/api/httpConfig.js connectPath` to your connect path.
 
 it should be `ws://127.0.0.1:9944` by default.
 
 Please find the correct contractHash for `` src/utils/contractHash.json ``, and update the correct address in   `src/utils/contractHash.json`.
+
+
 
 ### Install dependencies
 
